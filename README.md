@@ -8,7 +8,6 @@ A blockchain-based messaging application built with React, Express.js, and Hardh
 
 - 💬 Persistent on-chain message storage
 - 🔒 Wallet authentication using private keys
-- 🎨 Purple-themed responsive UI
 - ⚡ Real-time message updates
 - 📝 Message history visible to all participants
 
