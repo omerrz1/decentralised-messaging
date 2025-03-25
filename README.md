@@ -3,14 +3,6 @@
 A blockchain-based messaging application built with React, Express.js, and Hardhat that allows users to send immutable messages to a shared chat on the Ethereum blockchain.
 
 
-# project structure:
-eth-messenger/
-├── client/          # React frontend
-├── server/          # Express backend
-└── contracts/       # Hardhat project
-    ├── contracts/   # Solidity smart contracts
-    └── scripts/     # Deployment scripts
-
     
 ## Features
 
