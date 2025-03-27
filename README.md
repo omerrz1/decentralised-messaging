@@ -2,15 +2,6 @@
 
 A blockchain-based messaging application built with React, Express.js, and Hardhat that allows users to send immutable messages to a shared chat on the Ethereum blockchain.
 
-
-    
-## Features
-
-- 💬 Persistent on-chain message storage
-- 🔒 Wallet authentication using private keys
-- ⚡ Real-time message updates
-- 📝 Message history visible to all participants
-
 ## Tech Stack
 
 - **Frontend**: React.js with Material-UI
