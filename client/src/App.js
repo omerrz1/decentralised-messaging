@@ -24,6 +24,7 @@ function App() {
 
   // Create a map to persist the mythical names by wallet address
   const [nameMap, setNameMap] = useState({});
+  const [hoveredAddress, setHoveredAddress] = useState(null);
 
   // Random name generator for mythical names
   const getRandomName = (address) => {
@@ -203,73 +204,73 @@ function App() {
           maxHeight: '60vh',
           overflow: 'auto'
         }}>
-     
-          {allMessages.map((message, index) => (
-            <ListItem 
-              key={index} 
-              alignItems="flex-start"
-              sx={{
-                backgroundColor: message.sender.toLowerCase() === walletAddress.toLowerCase() 
-                  ? themeColors.secondary 
-                  : 'white',
-                mb: 1,
-                borderRadius: 2,
-                borderLeft: `4px solid ${themeColors.primary}`
-              }}
-            >
-              <Avatar 
-                alt="User Avatar" 
-                src="/default-avatar.png"
-                sx={{ width: 40, height: 40, mr: 2 }} 
-              />
-              <ListItemText
-                primary={
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Typography
-                      component="span"
-                      sx={{
-                        fontWeight: 'medium',
-                        color: themeColors.text,
-                        mr: 1,
-                        '&:hover': {
-                          textDecoration: 'underline',
-                          cursor: 'pointer'
-                        }
-                      }}
-                      onMouseEnter={() => alert(message.sender)} // Show wallet address on hover
-                    >
-                      {getRandomName(message.sender)} {/* Consistent Name for Each User */}
+          {allMessages.length === 0 ? (
+            <Typography sx={{ textAlign: 'center', color: themeColors.text, fontSize: '18px' }}>No messages yet...</Typography>
+          ) : (
+            allMessages.map((message, index) => (
+              <ListItem 
+                key={index} 
+                alignItems="flex-start"
+                sx={{
+                  backgroundColor: message.sender.toLowerCase() === walletAddress.toLowerCase() 
+                    ? themeColors.secondary 
+                    : 'white',
+                  mb: 1,
+                  borderRadius: 2,
+                  borderLeft: `4px solid ${themeColors.primary}`
+                }}
+              >
+                <Box
+                  sx={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    cursor: 'pointer', 
+                    '&:hover': { 
+                      color: themeColors.primary 
+                    }
+                  }}
+                  onMouseEnter={() => setHoveredAddress(message.sender)}
+                  onMouseLeave={() => setHoveredAddress(null)}
+                >
+                  <Avatar 
+                    alt="User Avatar" 
+                    src="/default-avatar.png"
+                    sx={{ width: 40, height: 40, mr: 2 }} 
+                  />
+                  <Typography variant="body1" sx={{ fontWeight: 'medium', color: themeColors.text }}>
+                    {getRandomName(message.sender)}
+                  </Typography>
+                  {/* Show wallet address next to the avatar when hovered */}
+                  {hoveredAddress === message.sender && (
+                    <Typography variant="body2" sx={{ ml: 1, color: themeColors.primary }}>
+                      {message.sender.substring(0, 6)}...{message.sender.substring(38)}
                     </Typography>
-                    <Typography 
-                      component="span"
-                      sx={{
-                        fontSize: '12px',
-                        color: themeColors.primary,
-                      }}
-                    >
-                      {message.sender.toLowerCase() === walletAddress.toLowerCase() 
-                        ? 'You' 
-                        : `${message.sender.substring(0, 6)}...${message.sender.substring(38)}`}
-                    </Typography>
-                  </Box>
-                }
-                secondary={
-                  <>
-                    <Typography
-                      component="span"
-                      variant="body2"
-                      sx={{ 
-                        color: themeColors.primary,
-                        fontWeight: 'bold'
-                      }}
-                    >
-                      {new Date(message.timestamp * 1000).toLocaleString()}
-                    </Typography>
-                  </>
-                }
-              />
-            </ListItem>
-          ))}
+                  )}
+                </Box>
+
+                <ListItemText
+                  secondary={
+                    <>
+                      {/* Show the actual message content here */}
+                      <Typography variant="body1" sx={{ color: themeColors.text }}>
+                        {message.content}
+                      </Typography>
+                      <Typography
+                        component="span"
+                        variant="body2"
+                        sx={{ 
+                          color: themeColors.primary,
+                          fontWeight: 'bold'
+                        }}
+                      >
+                        {new Date(message.timestamp * 1000).toLocaleString()}
+                      </Typography>
+                    </>
+                  }
+                />
+              </ListItem>
+            ))
+          )}
         </List>
       </Container>
     </Box>
