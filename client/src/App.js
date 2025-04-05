@@ -3,6 +3,8 @@ import { ethers } from 'ethers';
 import axios from 'axios';
 import { Box, TextField, Button, List, ListItem, ListItemText, Typography, AppBar, Toolbar, Container } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
+import { Avatar } from '@mui/material';
+
 
 function App() {
   const [allMessages, setAllMessages] = useState([]);
@@ -171,6 +173,11 @@ function App() {
           maxHeight: '60vh',
           overflow: 'auto'
         }}>
+          <Avatar 
+          alt="User Avatar" 
+          src="/default-avatar.png"
+          sx={{ width: 40, height: 40, mr: 2 }} 
+          />
           {allMessages.map((message, index) => (
             <ListItem 
               key={index} 
