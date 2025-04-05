@@ -1,5 +1,7 @@
 # Decentralized Ethereum Messenger
 
+![Screenshot 2025-04-05 at 23 51 42](https://github.com/user-attachments/assets/ab73e7a3-c244-4ccc-af1a-ccda223ff12d)
+
 A blockchain-based messaging application built with React, Express.js, and Hardhat that allows users to send immutable messages to a shared chat on the Ethereum blockchain.
 
 ## Tech Stack
