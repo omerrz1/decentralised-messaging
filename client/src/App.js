@@ -57,31 +57,32 @@ function App() {
 
   const sendMessage = async () => {
     if (!newMessage || !isConnected) return;
-    
+  
     try {
-      // Immediately show the message locally (optimistic update)
       const tempMessage = {
         sender: walletAddress,
         content: newMessage,
         timestamp: Math.floor(Date.now() / 1000),
-        isOptimistic: true // Temporary flag
+        isOptimistic: true
       };
       setAllMessages(prev => [tempMessage, ...prev]);
-      
-      // Send to the blockchain via your backend
+  
       await axios.post('http://localhost:3001/messages/send', {
         content: newMessage,
         privateKey: privateKey
       });
-      
+  
       setNewMessage('');
-      // The polling will soon replace this with the blockchain-confirmed message
+  
+      // 🔥 Fetch confirmed messages right after sending
+      fetchMessages();
+  
     } catch (error) {
       console.error('Error sending message:', error);
-      // Remove the temporary message if sending failed
       setAllMessages(prev => prev.filter(msg => !msg.isOptimistic));
     }
   };
+  
 
   return (
     <Box sx={{ flexGrow: 1, backgroundColor: themeColors.background, minHeight: '100vh' }}>
@@ -173,13 +174,10 @@ function App() {
           maxHeight: '60vh',
           overflow: 'auto'
         }}>
-          <Avatar 
-          alt="User Avatar" 
-          src="/default-avatar.png"
-          sx={{ width: 40, height: 40, mr: 2 }} 
-          />
+     
           {allMessages.map((message, index) => (
             <ListItem 
+
               key={index} 
               alignItems="flex-start"
               sx={{
@@ -191,6 +189,11 @@ function App() {
                 borderLeft: `4px solid ${themeColors.primary}`
               }}
             >
+                   <Avatar 
+          alt="User Avatar" 
+          src="/default-avatar.png"
+          sx={{ width: 40, height: 40, mr: 2 }} 
+          />
               <ListItemText
                 primary={message.content}
                 primaryTypographyProps={{
