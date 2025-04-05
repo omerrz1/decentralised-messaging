@@ -217,7 +217,8 @@ function App() {
                     : 'white',
                   mb: 1,
                   borderRadius: 2,
-                  borderLeft: `4px solid ${themeColors.primary}`
+                  borderLeft: `4px solid ${themeColors.primary}`,
+                  animation: 'fadeInSlideUp 0.5s ease-out forwards'
                 }}
               >
                 <Box
