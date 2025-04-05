@@ -50,7 +50,7 @@ cd ../client
 npm install
 ```
 
-# running teh application
+# running the application
 
 1. **start the block chain**:
 ```bash
