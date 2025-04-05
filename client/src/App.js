@@ -22,11 +22,25 @@ function App() {
   const [walletAddress, setWalletAddress] = useState('');
   const [isConnected, setIsConnected] = useState(false);
 
+  // Create a map to persist the mythical names by wallet address
+  const [nameMap, setNameMap] = useState({});
+
   // Random name generator for mythical names
-  const getRandomName = () => {
-    const name = mythicalNames[Math.floor(Math.random() * mythicalNames.length)];
+  const getRandomName = (address) => {
+    // Check if we already have a name stored for this address
+    if (nameMap[address]) {
+      return nameMap[address]; // Use the stored name
+    }
+
+    // If not, generate a random name and store it
+    const randomName = mythicalNames[Math.floor(Math.random() * mythicalNames.length)];
     const emoji = emojis[Math.floor(Math.random() * emojis.length)];
-    return `${name} ${emoji}`;
+    const fullName = `${randomName} ${emoji}`;
+
+    // Update the nameMap and persist it
+    setNameMap(prevMap => ({ ...prevMap, [address]: fullName }));
+
+    return fullName;
   };
 
   // Purple color theme
@@ -224,7 +238,7 @@ function App() {
                       }}
                       onMouseEnter={() => alert(message.sender)} // Show wallet address on hover
                     >
-                      {getRandomName()} {/* Random Mythical Name + Emoji */}
+                      {getRandomName(message.sender)} {/* Consistent Name for Each User */}
                     </Typography>
                     <Typography 
                       component="span"
