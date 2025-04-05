@@ -1,4 +1,4 @@
-// Add this before any other code
+
 BigInt.prototype.toJSON = function() { return this.toString() };
 require('dotenv').config();
 const express = require('express');
