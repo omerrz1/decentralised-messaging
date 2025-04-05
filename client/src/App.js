@@ -5,7 +5,7 @@ import { Box, TextField, Button, List, ListItem, ListItemText, Typography, AppBa
 import SendIcon from '@mui/icons-material/Send';
 import { Avatar } from '@mui/material';
 
-// List of mythical names and emojis
+// List of mythical names, emojis, and avatars
 const mythicalNames = [
   "Zeus 🧑‍⚖️", "Hades ☠️", "Apollo 🌞", "Thor ⚡", "Athena 🦉", 
   "Medusa 🐍", "Cyclops 👁️", "Loki 🦹", "Phoenix 🔥", "Griffin 🦅",
@@ -15,6 +15,20 @@ const mythicalNames = [
 
 const emojis = ["🧑‍⚖️", "☠️", "🌞", "⚡", "🦉", "🐍", "👁️", "🦹", "🔥", "🦅", "🐙", "🛡️", "🧙‍♂️", "🐉", "🦸‍♂️", "🦁", "🐕‍🦺", "🐎", "👻"];
 
+// List of avatars
+const avatars = [
+  "/default-avatar1.png",
+  "/default-avatar2.png",
+  "/default-avatar3.png",
+  "/default-avatar4.png",
+  "/default-avatar5.png",
+  "/default-avatar6.png",
+  "/default-avatar7.png",
+  "/default-avatar8.png",
+  "/default-avatar9.png",
+  "/default-avatar10.png"
+];
+
 function App() {
   const [allMessages, setAllMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
@@ -22,26 +36,32 @@ function App() {
   const [walletAddress, setWalletAddress] = useState('');
   const [isConnected, setIsConnected] = useState(false);
 
-  // Create a map to persist the mythical names by wallet address
+  // Create a map to persist the mythical names and avatars by wallet address
   const [nameMap, setNameMap] = useState({});
+  const [avatarMap, setAvatarMap] = useState({});
   const [hoveredAddress, setHoveredAddress] = useState(null);
 
-  // Random name generator for mythical names
+  // Random name and avatar generator for mythical names
   const getRandomName = (address) => {
-    // Check if we already have a name stored for this address
     if (nameMap[address]) {
       return nameMap[address]; // Use the stored name
     }
-
-    // If not, generate a random name and store it
     const randomName = mythicalNames[Math.floor(Math.random() * mythicalNames.length)];
     const emoji = emojis[Math.floor(Math.random() * emojis.length)];
     const fullName = `${randomName} ${emoji}`;
 
-    // Update the nameMap and persist it
     setNameMap(prevMap => ({ ...prevMap, [address]: fullName }));
-
     return fullName;
+  };
+
+  // Random avatar generator
+  const getRandomAvatar = (address) => {
+    if (avatarMap[address]) {
+      return avatarMap[address]; // Use the stored avatar
+    }
+    const randomAvatar = avatars[Math.floor(Math.random() * avatars.length)];
+    setAvatarMap(prevMap => ({ ...prevMap, [address]: randomAvatar }));
+    return randomAvatar;
   };
 
   // Purple color theme
@@ -64,7 +84,6 @@ function App() {
     }
   }; 
   
-  // Load messages on start and set up polling
   useEffect(() => {
     fetchMessages(); // Initial load
     
@@ -90,7 +109,6 @@ function App() {
     if (!newMessage || !isConnected) return;
     
     try {
-      // Immediately show the message locally (optimistic update)
       const tempMessage = {
         sender: walletAddress,
         content: newMessage,
@@ -106,10 +124,8 @@ function App() {
       });
       
       setNewMessage('');
-      // The polling will soon replace this with the blockchain-confirmed message
     } catch (error) {
       console.error('Error sending message:', error);
-      // Remove the temporary message if sending failed
       setAllMessages(prev => prev.filter(msg => !msg.isOptimistic));
     }
   };
@@ -235,7 +251,7 @@ function App() {
                 >
                   <Avatar 
                     alt="User Avatar" 
-                    src="/default-avatar.png"
+                    src={getRandomAvatar(message.sender)}
                     sx={{ width: 40, height: 40, mr: 2 }} 
                   />
                   <Typography variant="body1" sx={{ fontWeight: 'medium', color: themeColors.text }}>
