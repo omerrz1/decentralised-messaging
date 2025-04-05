@@ -5,6 +5,15 @@ import { Box, TextField, Button, List, ListItem, ListItemText, Typography, AppBa
 import SendIcon from '@mui/icons-material/Send';
 import { Avatar } from '@mui/material';
 
+// List of mythical names and emojis
+const mythicalNames = [
+  "Zeus 🧑‍⚖️", "Hades ☠️", "Apollo 🌞", "Thor ⚡", "Athena 🦉", 
+  "Medusa 🐍", "Cyclops 👁️", "Loki 🦹", "Phoenix 🔥", "Griffin 🦅",
+  "Kraken 🐙", "Valkyrie 🛡️", "Merlin 🧙‍♂️", "Fafnir 🐉", "Odin 🦸‍♂️",
+  "Sphinx 🦁", "Hydra 🐉", "Cerberus 🐕‍🦺", "Pegasus 🐎", "Banshee 👻"
+];
+
+const emojis = ["🧑‍⚖️", "☠️", "🌞", "⚡", "🦉", "🐍", "👁️", "🦹", "🔥", "🦅", "🐙", "🛡️", "🧙‍♂️", "🐉", "🦸‍♂️", "🦁", "🐕‍🦺", "🐎", "👻"];
 
 function App() {
   const [allMessages, setAllMessages] = useState([]);
@@ -12,6 +21,13 @@ function App() {
   const [privateKey, setPrivateKey] = useState('');
   const [walletAddress, setWalletAddress] = useState('');
   const [isConnected, setIsConnected] = useState(false);
+
+  // Random name generator for mythical names
+  const getRandomName = () => {
+    const name = mythicalNames[Math.floor(Math.random() * mythicalNames.length)];
+    const emoji = emojis[Math.floor(Math.random() * emojis.length)];
+    return `${name} ${emoji}`;
+  };
 
   // Purple color theme
   const themeColors = {
@@ -57,39 +73,38 @@ function App() {
 
   const sendMessage = async () => {
     if (!newMessage || !isConnected) return;
-  
+    
     try {
+      // Immediately show the message locally (optimistic update)
       const tempMessage = {
         sender: walletAddress,
         content: newMessage,
         timestamp: Math.floor(Date.now() / 1000),
-        isOptimistic: true
+        isOptimistic: true // Temporary flag
       };
       setAllMessages(prev => [tempMessage, ...prev]);
-  
+      
+      // Send to the blockchain via your backend
       await axios.post('http://localhost:3001/messages/send', {
         content: newMessage,
         privateKey: privateKey
       });
-  
+      
       setNewMessage('');
-  
-      // 🔥 Fetch confirmed messages right after sending
-      fetchMessages();
-  
+      // The polling will soon replace this with the blockchain-confirmed message
     } catch (error) {
       console.error('Error sending message:', error);
+      // Remove the temporary message if sending failed
       setAllMessages(prev => prev.filter(msg => !msg.isOptimistic));
     }
   };
-  
 
   return (
     <Box sx={{ flexGrow: 1, backgroundColor: themeColors.background, minHeight: '100vh' }}>
       <AppBar position="static" sx={{ backgroundColor: themeColors.primary }}>
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1, color: 'white' }}>
-            ETH Group Chat
+            ETH Mythical Chat
           </Typography>
           {isConnected ? (
             <Typography variant="subtitle1" sx={{ color: themeColors.secondary }}>
@@ -177,7 +192,6 @@ function App() {
      
           {allMessages.map((message, index) => (
             <ListItem 
-
               key={index} 
               alignItems="flex-start"
               sx={{
@@ -189,17 +203,42 @@ function App() {
                 borderLeft: `4px solid ${themeColors.primary}`
               }}
             >
-                   <Avatar 
-          alt="User Avatar" 
-          src="/default-avatar.png"
-          sx={{ width: 40, height: 40, mr: 2 }} 
-          />
+              <Avatar 
+                alt="User Avatar" 
+                src="/default-avatar.png"
+                sx={{ width: 40, height: 40, mr: 2 }} 
+              />
               <ListItemText
-                primary={message.content}
-                primaryTypographyProps={{
-                  color: themeColors.text,
-                  fontWeight: 'medium'
-                }}
+                primary={
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <Typography
+                      component="span"
+                      sx={{
+                        fontWeight: 'medium',
+                        color: themeColors.text,
+                        mr: 1,
+                        '&:hover': {
+                          textDecoration: 'underline',
+                          cursor: 'pointer'
+                        }
+                      }}
+                      onMouseEnter={() => alert(message.sender)} // Show wallet address on hover
+                    >
+                      {getRandomName()} {/* Random Mythical Name + Emoji */}
+                    </Typography>
+                    <Typography 
+                      component="span"
+                      sx={{
+                        fontSize: '12px',
+                        color: themeColors.primary,
+                      }}
+                    >
+                      {message.sender.toLowerCase() === walletAddress.toLowerCase() 
+                        ? 'You' 
+                        : `${message.sender.substring(0, 6)}...${message.sender.substring(38)}`}
+                    </Typography>
+                  </Box>
+                }
                 secondary={
                   <>
                     <Typography
@@ -210,11 +249,8 @@ function App() {
                         fontWeight: 'bold'
                       }}
                     >
-                      {message.sender.toLowerCase() === walletAddress.toLowerCase() 
-                        ? 'You' 
-                        : `${message.sender.substring(0, 6)}...${message.sender.substring(38)}`}
+                      {new Date(message.timestamp * 1000).toLocaleString()}
                     </Typography>
-                    {` — ${new Date(message.timestamp * 1000).toLocaleString()}`}
                   </>
                 }
               />
